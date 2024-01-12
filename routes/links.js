@@ -1,5 +1,6 @@
 const express = require("express")
 const { MongoClient } = require("mongodb")
+const path = require("path");
 const router = express.Router()
 
 const {
@@ -33,7 +34,7 @@ router.get("/:key", async (req, res) => {
       res.redirect(`https://${r}`)
     }
   } else {
-    res.status(404).json(new Response(404, [], ["the original url for this id is not found."]));
+    res.sendFile(path.join(__dirname, "..", "public", "notFound.html"))
   }
 })
 
