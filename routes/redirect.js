@@ -1,7 +1,7 @@
 const express = require("express")
-const {redirectById} = require("../controller/redirectController")
+const {redirectByKey} = require("../controller/redirectController")
 const router = express.Router()
 
-router.get("/:key", redirectById)
+router.get("/:key", redirectByKey)
 
 module.exports = router

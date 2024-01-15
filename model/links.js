@@ -17,7 +17,7 @@ const createDbConnection = async () => {
   }
 };
 
-const getRedirectById = async (key) => {
+const getRedirectByKey = async (key) => {
   const db = await createDbConnection();
   return await db.findOne({ "key": key })
 }
@@ -28,6 +28,6 @@ const createNewRedirect = async (redirectLink) => {
 }
 
 module.exports = {
-  getRedirectById,
+  getRedirectByKey,
   createNewRedirect
 }

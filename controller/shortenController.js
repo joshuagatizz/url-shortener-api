@@ -4,7 +4,7 @@ const RedirectLink = require("../entity/redirectLink")
 
 const createNewShortenedLink = async (req, res) => {
   const {longUrl, key} = req.body
-  const linkObject = await db.getRedirectById(key)
+  const linkObject = await db.getRedirectByKey(key)
   if (linkObject) {
     res.status(400).json(new ShortenUrlResponse(400, [], ["duplicate key"]))
   } else {
