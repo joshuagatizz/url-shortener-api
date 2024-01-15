@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
-const linkRouter = require("./routes/links")
+const shortenRouter = require("./routes/shorten")
+const redirectRouter = require("./routes/redirect")
 
-app.use("/api/link", linkRouter)
+app.use("/", redirectRouter)
+app.use("/api/shorten", shortenRouter)
 
 app.listen(3000)
