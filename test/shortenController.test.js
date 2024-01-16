@@ -9,6 +9,10 @@ const data = {
   "key":"test",
   "longUrl":"https://google.com"
 }
+const dataWithEmptyLongUrl = {
+  "key":"test",
+  "longUrl":""
+}
 const DbDataDuplicateKey = {
   "key":"test",
   "redirect":"https://facebook.com"
@@ -37,17 +41,18 @@ describe("POST /api/shorten", () => {
       })
   })
 
-  it("should fail creating new shortened url due to duplicate data", async () => {
+  it("should fail creating new shortened url due to duplicate data and an empty field", async () => {
     await db.insertOne(DbDataDuplicateKey)
     return request(app)
       .post("/api/shorten")
       .set("Content-Type", "application/json; charset=utf-8")
-      .send(JSON.stringify(data))
+      .send(JSON.stringify(dataWithEmptyLongUrl))
       .expect(400)
       .expect("Content-Type", "application/json; charset=utf-8")
       .then(async response => {
         expect(response.body.status).toBe(400)
         expect(response.body.errors).toContainEqual("duplicate key")
+        expect(response.body.errors).toContainEqual("there is an empty field")
 
         const r = await db.find({}).toArray()
         expect(r.length).toBe(1)
