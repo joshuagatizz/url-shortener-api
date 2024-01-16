@@ -10,7 +10,7 @@ const redirectByKey = async (req, res) => {
       res.redirect(`https://${r}`)
     }
   } else {
-    res.sendFile(path.join(__dirname, "..", "public", "notFound.html"))
+    res.status(404).sendFile(path.join(__dirname, "..", "public", "notFound.html"))
   }
 }
 
