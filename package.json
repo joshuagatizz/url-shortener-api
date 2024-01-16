@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --env-file=.env --watch index.js",
     "start": "node --env-file=.env index.js",
-    "test": "jest --forceExit --coverage --verbose"
+    "test": "jest --forceExit --coverage --verbose --runInBand"
   },
   "repository": {
     "type": "git",
