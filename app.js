@@ -8,4 +8,4 @@ app.use(express.json())
 app.use("/", redirectRouter)
 app.use("/api/shorten", shortenRouter)
 
-app.listen(3000)
+module.exports = app
