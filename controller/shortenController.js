@@ -1,5 +1,5 @@
 const db = require("../model/links");
-const ShortenUrlResponse = require("../entity/shortenUrlResponse")
+const Response = require("../entity/response")
 const RedirectLink = require("../entity/redirectLink")
 
 const createNewShortenedLink = async (req, res) => {
@@ -13,10 +13,10 @@ const createNewShortenedLink = async (req, res) => {
     errors.push("duplicate key");
   }
   if (errors.length > 0) {
-    res.status(400).json(new ShortenUrlResponse(400, [], errors));
+    res.status(400).json(new Response(400, [], errors));
   } else {
     await db.createNewRedirect(new RedirectLink(key, longUrl));
-    res.status(200).json(new ShortenUrlResponse(200));
+    res.status(200).json(new Response(200));
   }
 }
 

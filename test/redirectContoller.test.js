@@ -2,10 +2,8 @@ const request = require("supertest")
 const { MongoClient } = require("mongodb")
 const app = require("../app")
 const {describe, it, beforeAll, afterAll, expect} = require("@jest/globals")
-const {response} = require("express");
 const {MONGO_URI, MONGO_DB_NAME, MONGO_COLLECTION_NAME} = process.env
 const db = new MongoClient(MONGO_URI).db(MONGO_DB_NAME).collection(MONGO_COLLECTION_NAME)
-const fs = require("fs")
 
 const dbDataWithHttps = {
   "key":"test",
@@ -30,29 +28,38 @@ afterAll(done => {
 
 describe("GET /:key", () => {
   describe("redirect url with https", () => {
-    it("should successfully redirect to the correct url", () => {
+    it("should successfully return the long url", () => {
       return request(app)
-        .get("/" + key1)
-        .expect(302)
-        .expect("Location", dbDataWithHttps.redirect)
+        .get("/api/redirect/" + key1)
+        .expect(200)
+        .expect("Content-Type", "application/json; charset=utf-8")
+        .then(async response => {
+          expect(response.body.status).toBe(200)
+          expect(response.body.data.longUrl).toBe(dbDataWithHttps.redirect)
+        })
     })
   })
   describe("redirect url without https", () => {
-    it("should successfully redirect to the correct url", () => {
+    it("should successfully return the long url with added https", () => {
       return request(app)
-        .get("/" + key2)
-        .expect(302)
-        .expect("Location", "https://" + dbDataWithoutHttps.redirect)
+        .get("/api/redirect/" + key2)
+        .expect(200)
+        .expect("Content-Type", "application/json; charset=utf-8")
+        .then(async response => {
+          expect(response.body.status).toBe(200)
+          expect(response.body.data.longUrl).toBe("https://" + dbDataWithoutHttps.redirect)
+        })
     })
   })
 
   it("should redirect to the not found page due to invalid key", () => {
     return request(app)
-      .get("/" + "random-key")
+      .get("/api/redirect/" + "random-key")
       .expect(404)
+      .expect("Content-Type", "application/json; charset=utf-8")
       .then(response => {
-        const expectedHTML = fs.readFileSync("./public/notFound.html", "utf-8")
-        expect(response.text).toEqual(expectedHTML)
+        expect(response.body.status).toBe(404)
+        expect(response.body.errors).toContainEqual("long url not found")
       })
   })
 })

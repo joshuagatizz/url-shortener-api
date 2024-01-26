@@ -1,4 +1,4 @@
-class ShortenUrlResponse {
+class Response {
   constructor(status, data = [], errors = []) {
     this.status = status
     this.data = data
@@ -6,4 +6,4 @@ class ShortenUrlResponse {
   }
 }
 
-module.exports = ShortenUrlResponse
+module.exports = Response
