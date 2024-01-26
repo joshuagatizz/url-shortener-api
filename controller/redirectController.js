@@ -1,16 +1,16 @@
 const db = require("../model/links");
-const path = require("path");
+const Response = require("../entity/response")
 const redirectByKey = async (req, res) => {
   const linkObject = await db.getRedirectByKey(req.params.key)
+
   if (linkObject && linkObject.redirect) {
-    const r = linkObject.redirect
-    if (r.startsWith("https") || r.startsWith("http")) {
-      res.redirect(r)
-    } else {
-      res.redirect(`https://${r}`)
+    let r = linkObject.redirect
+    if (!r.startsWith("http")) {
+      r = `https://${r}`
     }
+    res.status(200).json(new Response(200, {"longUrl": r}))
   } else {
-    res.status(404).sendFile(path.join(__dirname, "..", "public", "notFound.html"))
+    res.status(404).json(new Response(404, [], ["long url not found"]))
   }
 }
 
