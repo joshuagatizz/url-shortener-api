@@ -32,4 +32,4 @@ This repository contains the backend implementation of a URL shortener applicati
    npm run start
    ```
 
-The API server will be running on https://localhost:8080.
+The API server will be running on http://localhost:8080.
