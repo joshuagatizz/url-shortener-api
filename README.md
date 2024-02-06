@@ -11,7 +11,7 @@ This repository contains the backend implementation of a URL shortener applicati
 1. **Clone the repository:**
 
    ```bash
-   https://github.com/joshuagatizz/url-shortener-api.git
+   git clone https://github.com/joshuagatizz/url-shortener-api.git
    ```
 2. **Install dependencies**
     ```bash
