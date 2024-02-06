@@ -6,9 +6,7 @@ const {
 } = process.env
 
 function db() {
-
   let db = null;
-  let instance = 0;
 
   async function dbConnect() {
     const _db = new MongoClient(MONGO_URI)
@@ -22,8 +20,6 @@ function db() {
 
   async function getInstance() {
     try {
-      instance++;
-
       if (db != null) {
         return db;
       } else {
@@ -35,9 +31,7 @@ function db() {
     }
   }
 
-  return {
-    getInstance: getInstance
-  }
+  return getInstance
 }
 
 module.exports = db()
