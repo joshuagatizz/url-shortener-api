@@ -1,0 +1,39 @@
+# Node modules (will be installed inside container)
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Local development files
+.env
+.env.local
+.DS_Store
+.vscode
+.idea
+
+# Logs
+*.log
+logs/
+debug/
+tmp/
+
+# OS / editor files
+Thumbs.db
+
+# Build artifacts
+dist
+build
+coverage
+
+# Docker-specific
+docker-compose.yml
+Dockerfile*
+
+# Git
+.git
+.gitignore
+
+# Tests (optional)
+test
+__tests__
+
+mongo_data/
