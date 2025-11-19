@@ -5,32 +5,27 @@ const {
   MONGO_COLLECTION_NAME,
 } = process.env
 
-function db() {
-  let db = null;
+async function addIndexes(col) {
+  await col.createIndex({ key: 1 }, { unique: true });
 
-  async function dbConnect() {
-    const _db = new MongoClient(MONGO_URI)
-    try {
-      await _db.connect()
-      return _db.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_NAME)
-    } catch (e) {
-      return e;
-    }
-  }
+  console.log("[DB] Indexes ensured");
+}
+
+function db() {
+  let collection = null
 
   async function getInstance() {
-    try {
-      if (db != null) {
-        return db;
-      } else {
-        db = await dbConnect();
-        return db;
-      }
-    } catch (e) {
-      return e;
-    }
-  }
+    if (collection) return collection
 
+    const client = new MongoClient(MONGO_URI)
+    await client.connect()
+
+    collection = client.db(MONGO_DB_NAME).collection(MONGO_COLLECTION_NAME)
+    addIndexes(collection).catch(console.error)
+
+    return collection
+  }
+  
   return getInstance
 }
 
