@@ -1,9 +1,6 @@
 const request = require("supertest")
-const { MongoClient } = require("mongodb")
-const app = require("../app")
+const { MongoMemoryServer } = require("mongodb-memory-server")
 const {describe, it, beforeAll, afterAll, expect} = require("@jest/globals")
-const {MONGO_URI, MONGO_DB_NAME, MONGO_COLLECTION_NAME} = process.env
-const db = new MongoClient(MONGO_URI).db(MONGO_DB_NAME).collection(MONGO_COLLECTION_NAME)
 
 const dbDataWithHttps = {
   "key":"test",
@@ -16,14 +13,24 @@ const dbDataWithoutHttps = {
 const key1 = "test"
 const key2 = "test2"
 
-beforeAll(done => {
-  db.insertMany([dbDataWithHttps, dbDataWithoutHttps])
-    .then(() => done())
+let app
+let mongod
+
+beforeAll(async () => {
+  mongod = await MongoMemoryServer.create()
+  process.env.MONGO_URI = mongod.getUri()
+  process.env.MONGO_DB_NAME = "url_shortener_test"
+  process.env.MONGO_COLLECTION_NAME = "links_test"
+  app = require("../app")
+
+  const db = await require("../model/db")();
+  await db.insertMany([dbDataWithHttps, dbDataWithoutHttps])
 })
 
-afterAll(done => {
-  db.deleteMany({})
-    .then(() => done())
+afterAll(async () => {
+  const db = await require("../model/db")();
+  await db.deleteMany({});
+  await mongod.stop();
 })
 
 describe("GET /:key", () => {
