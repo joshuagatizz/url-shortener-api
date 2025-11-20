@@ -1,9 +1,6 @@
 const request = require("supertest")
-const { MongoClient } = require("mongodb")
-const app = require("../app")
-const {describe, it, afterEach, expect} = require("@jest/globals")
-const {MONGO_URI, MONGO_DB_NAME, MONGO_COLLECTION_NAME} = process.env
-const db = new MongoClient(MONGO_URI).db(MONGO_DB_NAME).collection(MONGO_COLLECTION_NAME)
+const { MongoMemoryServer } = require("mongodb-memory-server")
+const {describe, it, beforeAll, afterAll, expect, afterEach} = require("@jest/globals")
 
 const data = {
   "key":"test",
@@ -18,13 +15,31 @@ const dbDataDuplicateKey = {
   "redirect":"https://facebook.com"
 }
 
-afterEach( done => {
-  db.deleteMany({})
-    .then(() => done())
+let app
+let mongod
+
+beforeAll(async () => {
+  mongod = await MongoMemoryServer.create()
+  process.env.MONGO_URI = mongod.getUri()
+  process.env.MONGO_DB_NAME = "url_shortener_test"
+  process.env.MONGO_COLLECTION_NAME = "links_test"
+  app = require("../app")
+})
+
+afterEach( async () => {
+  const db = await require("../model/db")();
+  await db.deleteMany({});
+})
+
+afterAll(async () => {
+  const db = await require("../model/db")();
+  await db.deleteMany({});
+  await mongod.stop();
 })
 
 describe("POST /api/shorten", () => {
-  it("should successfully create a new shortened url",  () => {
+  it("should successfully create a new shortened url", async () => {
+    const db = await require("../model/db")();
     return request(app)
       .post("/api/shorten")
       .set("Content-Type", "application/json; charset=utf-8")
@@ -42,6 +57,7 @@ describe("POST /api/shorten", () => {
   })
 
   it("should fail creating new shortened url due to duplicate data and an empty field", async () => {
+    const db = await require("../model/db")();
     await db.insertOne(dbDataDuplicateKey)
     return request(app)
       .post("/api/shorten")
